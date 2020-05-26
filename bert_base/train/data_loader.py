@@ -56,7 +56,7 @@ class NerProcessor(DataProcessor):
 
     def get_train_examples(self, data_dir):
         return self._create_example(
-            self._read_data(os.path.join(data_dir, "test")), "train"
+            self._read_data(os.path.join(data_dir, "train")), "train"
         )
 
     def get_dev_examples(self, data_dir):

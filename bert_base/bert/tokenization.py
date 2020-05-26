@@ -170,7 +170,7 @@ class FullTokenizer(object):
   def tokenize(self, text):
     split_tokens = []
     for token in self.basic_tokenizer.tokenize(text):
-      for sub_token in self.wordpiece_tokenizer.tokenize(token):
+      for sub_token in self.wordpiece_tokenizer.tokenize(token):#通过wordpiece对每一个词进行进一步的切分，把一个词切分为更基础的单元，中文切分为字
         split_tokens.append(sub_token)
 
     return split_tokens

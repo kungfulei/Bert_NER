@@ -390,16 +390,16 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   for (i, label) in enumerate(label_list):
     label_map[label] = i
 
-  tokens_a = tokenizer.tokenize(example.text_a)
+  tokens_a = tokenizer.tokenize(example.text_a)#判断数据中有几句话组成
   tokens_b = None
   if example.text_b:
     tokens_b = tokenizer.tokenize(example.text_b)
 
-  if tokens_b:
+  if tokens_b:#如果是2句话，就要加3个特殊字符；如果是1句话，就加1个特殊字符
     # Modifies `tokens_a` and `tokens_b` in place so that the total
     # length is less than the specified length.
     # Account for [CLS], [SEP], [SEP] with "- 3"
-    _truncate_seq_pair(tokens_a, tokens_b, max_seq_length - 3)
+    _truncate_seq_pair(tokens_a, tokens_b, max_seq_length - 3)#截断操作
   else:
     # Account for [CLS] and [SEP] with "- 2"
     if len(tokens_a) > max_seq_length - 2:
@@ -408,7 +408,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   # The convention in BERT is:
   # (a) For sequence pairs:
   #  tokens:   [CLS] is this jack ##son ##ville ? [SEP] no it is not . [SEP]
-  #  type_ids: 0     0  0    0    0     0       0 0     1  1  1  1   1 1
+  #  type_ids: 0     0  0    0    0     0       0 0     1  1  1  1   1 1   0属于前一句话，1属于后一句话
   # (b) For single sequences:
   #  tokens:   [CLS] the dog is hairy . [SEP]
   #  type_ids: 0     0   0   0  0     0 0
@@ -440,11 +440,11 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     tokens.append("[SEP]")
     segment_ids.append(1)
 
-  input_ids = tokenizer.convert_tokens_to_ids(tokens)
+  input_ids = tokenizer.convert_tokens_to_ids(tokens)#全部转化成id映射
 
   # The mask has 1 for real tokens and 0 for padding tokens. Only real
   # tokens are attended to.
-  input_mask = [1] * len(input_ids)
+  input_mask = [1] * len(input_ids)#制定mask为1的时候，说明是实际的词，为后面做attention考虑
 
   # Zero-pad up to the sequence length.
   while len(input_ids) < max_seq_length:

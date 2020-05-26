@@ -48,7 +48,7 @@ def create_model(bert_config, is_training, input_ids, input_mask,
         is_training=is_training,
         input_ids=input_ids,
         input_mask=input_mask,
-        token_type_ids=segment_ids,#中文才有的，分词的信息
+        token_type_ids=segment_ids,
         use_one_hot_embeddings=use_one_hot_embeddings
     )
     # 获取对应的embedding 输入数据[batch_size, seq_length, embedding_size]
@@ -185,7 +185,7 @@ def filed_based_convert_examples_to_features(
     :param mode:
     :return:
     """
-    writer = tf.python_io.TFRecordWriter(output_file)
+    writer = tf.python_io.TFRecordWriter(output_file)#bert模型中采用TFRecordWriter的形式进行数据处理，读数据快
     # 遍历训练数据
     for (ex_index, example) in enumerate(examples):#每一个样本要转化成feature。
         if ex_index % 5000 == 0:

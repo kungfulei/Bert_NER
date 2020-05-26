@@ -37,7 +37,6 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
     :param use_one_hot_embeddings:
     :return:
     """
-
     def model_fn(features, labels, mode, params):
         logger.info("*** Features ***")
         for name in sorted(features.keys()):
@@ -166,7 +165,7 @@ def train(FLAGS):
             len(train_examples) *1.0 / FLAGS.train_batch_size * FLAGS.num_train_epochs)
         if num_train_steps < 1:
             raise AttributeError('training data is so small...')
-        num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
+        num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)#bert模型中刚开始学习率设置小一点，等过了num_warmup_steps百分比后学习率在还原
 
         logger.info("***** Running training *****")
 
@@ -209,6 +208,8 @@ def train(FLAGS):
         num_warmup_steps=num_warmup_steps,
         FLAGS=FLAGS)
 
+
+
     params = {
         'batch_size': FLAGS.train_batch_size
     }
@@ -220,12 +221,12 @@ def train(FLAGS):
 
     early_stopping_hook = tf.contrib.estimator.stop_if_no_decrease_hook(
         estimator=estimator,
-        metric_name='loss',
-        max_steps_without_decrease=num_train_steps,
-        eval_dir=None,
-        min_steps=0,
+        metric_name='loss',#用来监控的目标
+        max_steps_without_decrease=num_train_steps,#如果没有增加的最大长是多少，如果超过了这个最大步长metric还是没有增加那么就会停止。
+        eval_dir=None,#默认是使用estimator.eval_dir目录，用于存放评估的summary file
+        min_steps=0,#训练的最小步长，如果训练小于这个步长那么永远都不会停止
         run_every_secs=None,
-        run_every_steps=FLAGS.save_checkpoints_steps)
+        run_every_steps=FLAGS.save_checkpoints_steps)#表示多长时间获得步长调用一次should_stop_fn
 
     train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, max_steps=num_train_steps,
                                         hooks=[early_stopping_hook])
